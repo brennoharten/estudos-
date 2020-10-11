@@ -2,7 +2,6 @@ class Vector extends Matrix{
 
   constructor(dim,values) {    
     super(dim,1,values);
-    this.size = dim;
   }
 
   get(i){
@@ -21,4 +20,10 @@ class Vector extends Matrix{
       super.set(1, i, value);
     } 
   }
+
+  size() {
+    return Math.max(this.rows, this.cols);
+  }
+
+
 }

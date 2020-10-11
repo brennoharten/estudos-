@@ -1,12 +1,11 @@
 class LinearAlgebra {
 
   transpose(a) {
-  
     let c;
   
     if (a instanceof Vector) {
 
-      c = new Vector(a.size);
+      c = new Vector(a.size());
       c.rows = a.cols;
       c.cols = a.rows
   
@@ -116,58 +115,80 @@ class LinearAlgebra {
     this.#isMatrix(a);
     this.#matrixHasSolveCompatibility(a);
     
-    let c = new Matrix(a.rows, a.cols, a.values.slice());
     
     //zerando a triangular inferior
-    for (let j = 1; j <= c.rows; j++) {
-      for (let i = j + 1; i <= c.rows; i++) {
-        //verificar se o pivô é igual a zero
-        //em caso de positivo substitui por uma linha 
-        //com o elemento não nulo na mesma coluna.
-        if (c.get(j, j) == 0) {
-          for (let k = j + 1; k <= c.rows; k++) {
-            if (c.get(k, j) != 0) {
-              this.changeRows(c, j, k);
-              break;
-            }
-          }
-        //Verificar qnd uma coluna 
-        //for toda igual a zero
+    let c = this.gauss(a).matrix;
 
-        }
-
-        let k = (-1 * c.get(i,j)) / c.get(j,j);
-        this.miltiplyRowbyScalarAndPlusRow(c, j, k, i);
-      }
-    }
-    
     //zerando a triangular superior
     for (let j = c.cols - 1; j >= 2; j --) {
       for (let i = j - 1; i >= 1; i --) {
         let k = (-1 * c.get(i,j)) / c.get(j,j);
-        this.miltiplyRowbyScalarAndPlusRow(c, j, k, i);
+        this.multiplyRowByScalarAndPlusRow(c, j, k, i);
       }
     }
-    
+
     // Diagonal principal igual a 1
     for (let j = 1; j <= c.cols - 1; j ++) {
       this.multiplyRowByScalar(c, j, 1/ c.get(j, j));
     }
 
     let vector = new Vector(c.rows);
-    for (let i = 1; i <= vector.size; i ++) {
+    for (let i = 1; i <= vector.size(); i ++) {
       vector.set(i, c.get(i,c.cols));
     }
     
     return vector;
     
   }
+
+  det(a) {
+    let c = this.gauss(a);
+    let det = c.cof;
+
+    for (let i = 1; i <= c.matrix.rows; i++) {
+      det *= c.matrix.get(i, i);
+    }
+    return det
+  }
+
+  gauss(a){
+    this.#isMatrix(a)
+    this.#matrixHasGaussCompatibility(a)
+    
+    let c = {
+      matrix: new Matrix(a.rows, a.cols, a.values.slice()),
+      cof: 1
+
+    }
+    
+
+    for (let j = 1; j <= c.matrix.rows; j++) {
+      for (let i = j + 1; i <= c.matrix.rows; i++) {
+        //verifica se o pivô é igual a zero
+        //se sim troca por um elemento não nulo na msm coluna
+        if (c.matrix.get(j, j) == 0) {
+          for (let k = j + 1; k <= c.matrix.rows; k++) {
+            if (c.matrix.get(k, j) != 0) {
+              this.changeRows(c.matrix, j, k);
+              c.cof *= -1
+              break;
+            }
+          }
+        }
+
+        let k = (-1 * c.matrix.get(i,j)) / c.matrix.get(j,j);
+        this.multiplyRowByScalarAndPlusRow(c.matrix, j, k, i);
+      }
+    }
+
+    return c;
+  }
   
   changeRows(a, ri, rj) {
     for (let j = 1; j <= a.cols; j++) {
       let aux = a.get(ri, j);
       a.set(ri, j, a.get(rj, j));
-      a.set(ri, j, aux);
+      a.set(rj, j, aux);
     }
   }
 
@@ -177,9 +198,9 @@ class LinearAlgebra {
     }
   }
 
-  miltiplyRowbyScalarAndPlusRow(a, ri, k, rj) {
+  multiplyRowByScalarAndPlusRow(a, ri, k, rj) {
     for (let j = 1; j <= a.cols; j++) {
-      a.set(ri, j, k * a.get(ri,j) + a.get(rj,j));
+      a.set(rj, j, k * a.get(ri,j) + a.get(rj, j));
     }
   }
   
@@ -211,6 +232,12 @@ class LinearAlgebra {
 
   #matrixHasSolveCompatibility(a) {
     if (a.cols != a.rows + 1) {
+      throw "A matriz passada como parametro é imcompatível!";
+    }
+  }
+
+  #matrixHasGaussCompatibility(a) {
+    if (a.cols >= a.rows + 1) {
       throw "A matriz passada como parametro é imcompatível!";
     }
   }

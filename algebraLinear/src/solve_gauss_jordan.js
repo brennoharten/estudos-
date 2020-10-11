@@ -32,9 +32,8 @@ fileSelector.addEventListener("change", function (event) {
 
         let start = Date.now();
         let result = la.solve(matrix);
-        let stop = Date.now();
-
-        let elapsedTime = stop - start;
+        let end = Date.now();
+        let elapsedTime = end - start;
         //matrix.show();
         //result.show();
 
