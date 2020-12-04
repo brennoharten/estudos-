@@ -183,6 +183,56 @@ class LinearAlgebra {
 
     return c;
   }
+
+  inverse(a) {
+    this.#isMatrix(a)
+    this.#matrixHasGaussCompatibility(a)
+    
+    let c = new Matrix(a.rows, a.cols); 
+    
+    //cria uma matriz identidade de A
+    this.transformToIdentity(c)
+
+    //começa a tranformação
+    //zerando a triangular inferior
+    for (let j = 1; j <= c.rows; j++) {
+      for (let i = j + 1; i <= c.rows; i++) {
+        //verifica se o pivô é igual a zero
+        //se sim troca por um elemento não nulo na msm coluna
+        if (a.get(j, j) == 0) {
+          for (let k = j + 1; k <= c.rows; k++) {
+            if (a.get(k, j) != 0) {
+              this.changeRows(c, j, k);
+              this.changeRows(a, j, k);
+              break;
+            }
+          }
+        }
+
+        let k = (-1 * a.get(i,j)) / a.get(j,j);
+        this.multiplyRowByScalarAndPlusRow(c, j, k, i);
+        this.multiplyRowByScalarAndPlusRow(a, j, k, i);
+      }
+    }
+    
+    //zerando a triangular superior
+    for (let j = c.cols ; j >= 2; j --) {
+      for (let i = j - 1; i >= 1; i --) {
+        let k = (-1 * a.get(i,j)) / a.get(j,j);
+        this.multiplyRowByScalarAndPlusRow(c, j, k, i);
+        this.multiplyRowByScalarAndPlusRow(a, j, k, i);
+      }
+    }
+
+    
+    // Diagonal principal igual a 1
+    for (let j = 1; j <= c.cols ; j ++) {
+      this.multiplyRowByScalar(c, j, 1/ a.get(j, j));
+      this.multiplyRowByScalar(a, j, 1/ a.get(j, j));
+    }
+        
+    return c
+  }
   
   changeRows(a, ri, rj) {
     for (let j = 1; j <= a.cols; j++) {
@@ -203,6 +253,14 @@ class LinearAlgebra {
       a.set(rj, j, k * a.get(ri,j) + a.get(rj, j));
     }
   }
+
+  transformToIdentity(a) {
+    for (let i = 1; i < a.cols + 1; i++) {  
+      a.set(i,i, 1)
+      
+    }
+  }
+  
   
   #isMatrix(a) {
     if(typeof a != "object" || !(a instanceof Matrix)) {
