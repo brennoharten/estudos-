@@ -1,4 +1,4 @@
-class Plan{
+class Plan {
 
     constructor(x, y, z, w, h, l) {
         this.points = [];
@@ -229,6 +229,8 @@ class pyramid {
 class sphere {
 
     constructor(x , y, r, st ,se) {
+        se *= 2
+        this.cont = 20;
         this.points = [];
         angleMode(DEGREES)
     
@@ -238,14 +240,14 @@ class sphere {
                 let b = r * sin(j) * sin(i) + y;
                 let z = r * cos(j);
                 this.points.push(new Vector(4, [a, b, z, 1]));
-
+                // point(a,b,z,)
             }
         }
         this.color = "#000000";
-        let t = new Transformations();
+        
 
-        this.faces = [];
-        this.faces.push([0,1,3,1,2,3]);
+        // this.faces = [];
+        // this.faces.push([0,1,3,1,2,3]);
     }
 
     setColor(newColor) {
@@ -253,8 +255,9 @@ class sphere {
     }
 
     translate(dx, dy, dz) {
+        let t = new Transformations();
         for (let i = 0; i < this.points.length; i++) {
-            this.points[i] = this.t.translate3D(this.points[i], dx, dy, dz);
+            this.points[i] = t.translate3D(this.points[i], dx, dy, dz);
         }
     }
 
@@ -277,15 +280,42 @@ class sphere {
 
     draw() {
 
-        
+        let cont = 21;
         stroke(this.color);
         
-        beginShape()
-            for (let i = 0; i < this.points.length; i++ ) {
+        for (let i = 0; i < this.points.length-1; i++ ) { 
+            
+            beginShape(TRIANGLE_STRIP) 
                 vertex(this.points[i].get(1), this.points[i].get(2), this.points[i].get(3));
-            }
+                vertex(this.points[i+1].get(1), this.points[i+1].get(2), this.points[i+1].get(3));
+                //vertex(this.points[i+2].get(1), this.points[i+2].get(2), this.points[i+2].get(3));
+            endShape(CLOSE)
 
-        endShape(CLOSE)
+        }
+        // beginShape(TRIANGLE_STRIP)
+            
+        // for (let i = 0; i < this.points.length-1; i++ ) {
+                
+        //     vertex(this.points[i].get(1), this.points[i].get(2), this.points[i].get(3));
+        //     vertex(this.points[i+1].get(1), this.points[i+1].get(2), this.points[i+1].get(3));
+        //     //vertex(this.points[i+2].get(1), this.points[i+2].get(2), this.points[i+2].get(3));
+        //     //vertex(this.points[i+cont].get(1), this.points[i+cont].get(2), this.points[i+cont].get(3));
+        //     //vertex(this.points[i+cont].get(1), this.points[i+cont].get(2), this.points[i+cont].get(3));
+        //     cont -= 1
+            
+        // }
+        // for (let i = 0; i < this.points.length-2; i++ ) {
+                
+        //     vertex(this.points[i].get(1), this.points[i].get(2), this.points[i].get(3));
+        //     //vertex(this.points[i+1].get(1), this.points[i+1].get(2), this.points[i+1].get(3));
+        //     vertex(this.points[i+2].get(1), this.points[i+2].get(2), this.points[i+2].get(3));
+        //     //vertex(this.points[i+cont].get(1), this.points[i+cont].get(2), this.points[i+cont].get(3));
+        //     //vertex(this.points[i+cont].get(1), this.points[i+cont].get(2), this.points[i+cont].get(3));
+        //     cont -= 1
+            
+        // }
+
+        // endShape(CLOSE)
 
     }    
 }
