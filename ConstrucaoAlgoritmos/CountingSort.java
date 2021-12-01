@@ -29,6 +29,10 @@ public class CountingSort {
 		for (int i = 0; i < alunos.length; i++) {
 			alunos[i] = new Aluno();
 		}
+		//imprime(alunos);
+		//alunos = ordenaCreditos(alunos);
+		// imprime(alunos);
+		// alunos = ordenaMatricula(alunos);
 		imprime(alunos);
 		/* alunos = ordenaCreditos(alunos);
 		imprime(alunos);  */
@@ -43,7 +47,7 @@ public class CountingSort {
         int[] C = new int[121];
 
         Arrays.fill(C ,0);
-
+		
         for (int j = 0; j < A.length; j++) {
             C[A[j].creditos] = C[A[j].creditos] + 1;
         }
@@ -86,7 +90,7 @@ public class CountingSort {
 	
 	static Aluno[] ordenaNome (Aluno[] A) {
 		Aluno[] B = new Aluno[A.length];
-		int[] C = new int[26];
+		int[] C = new int[25];
 		
 		// int placeValue = 1;
 		for (int d = 7; d >= 0; d--){
@@ -108,6 +112,7 @@ public class CountingSort {
 
 		return B;
 	}
+
 
 	static void imprime (Aluno[] A) {
 		for (int i = 0; i < A.length; i++) {
